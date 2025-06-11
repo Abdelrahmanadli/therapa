@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "605137923315",
+    "project_id": "theraputechapp",
+    "storage_bucket": "theraputechapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605137923315:android:539152483fa7e8285fdb86",
+        "android_client_info": {
+          "package_name": "com.example.therapa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAfXX6EbPSe8oFuk_1weMhKmtLHRXWzHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
