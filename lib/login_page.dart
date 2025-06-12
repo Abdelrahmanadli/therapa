@@ -4,8 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart'; // For TapGestureRecognizer in RichText
 import 'package:google_fonts/google_fonts.dart'; // For custom fonts
 import 'package:firebase_auth/firebase_auth.dart'; // For Firebase Authentication
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore operations
+
+// Import your RegisterPage here
+import 'package:therapa/register_page.dart';
+// Import your HomePage here
 import 'package:therapa/home_page.dart';
-import 'register_page.dart'; // Adjust this path if your file structure is different
+// Import your new TherapistHomePage
+import 'package:therapa/therapist_home_page.dart';
+// Import your new TherapistAccountSetupPage
+import 'package:therapa/therapist_account_setup_page.dart';
 
 
 // Define custom colors based on your specifications and image analysis
@@ -17,13 +25,16 @@ const Color secondaryText = Color(0xFF57636C); // Hint text, descriptive text
 const Color errorColor = Colors.red; // Standard error color
 const Color yellowishColor = Color(0xFFEEE691); // Defined in previous responses
 
-// Regex for email validation (from your original FlutterFlow code)
+// Regex for email validation
 const String kTextValidatorEmailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+
+// Enum to define user types for clarity
+enum UserType { patient, therapist }
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
-  static String routeName = 'LoginPage'; // For potential named routes
+  static String routeName = 'LoginPage';
   static String routePath = '/login';
 
   @override
@@ -31,37 +42,31 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>(); // Key for form validation
+  final _formKey = GlobalKey<FormState>();
 
-  // Controls when validation messages are shown. Starts disabled.
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-  // Text editing controllers for the input fields
   late TextEditingController emailAddressTextController;
   late TextEditingController passwordTextController;
 
-  // Focus nodes for managing input focus
   late FocusNode emailAddressFocusNode;
   late FocusNode passwordFocusNode;
 
-  // State variable for password visibility
   bool passwordVisibility = false;
+  UserType _selectedLoginType = UserType.patient; // Default login type
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers
     emailAddressTextController = TextEditingController();
     passwordTextController = TextEditingController();
 
-    // Initialize focus nodes
     emailAddressFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    // Dispose controllers and focus nodes to prevent memory leaks
     emailAddressTextController.dispose();
     passwordTextController.dispose();
 
@@ -76,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
     if (val == null || val.isEmpty) {
       return 'Email is required';
     }
-    // Check if length is at least 7 (from original FlutterFlow code)
     if (val.length < 7) {
       return 'Requires at least 7 characters.';
     }
@@ -91,7 +95,6 @@ class _LoginPageState extends State<LoginPage> {
     if (val == null || val.isEmpty) {
       return 'Password is required';
     }
-    // Check if length is at least 7 (from original FlutterFlow code)
     if (val.length < 7) {
       return 'Requires at least 7 characters.';
     }
@@ -123,34 +126,30 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Dismiss the keyboard when tapping outside of text fields
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        // The background of the scaffold is a gradient as seen in the image
-        backgroundColor: Colors.transparent, // Set to transparent to allow Container's gradient to show
+        backgroundColor: Colors.transparent,
         body: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              // Changed colors to yellowishColor and primaryGreen for the gradient
-              colors: [yellowishColor, primaryGreen], // Yellowish to primary green gradient
+              colors: [yellowishColor, primaryGreen],
               stops: [0.0, 1.0],
-              begin: AlignmentDirectional(0.87, -1.0), // Starts from top right, goes to bottom left
+              begin: AlignmentDirectional(0.87, -1.0),
               end: AlignmentDirectional(-0.87, 1.0),
             ),
           ),
-          alignment: AlignmentDirectional.center, // Center the content vertically
+          alignment: AlignmentDirectional.center,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Top icon/logo area
                 Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 20.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 70.0, 0.0, 20.0),
                   child: Container(
                     width: 200.0,
                     height: 70.0,
@@ -159,41 +158,40 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     alignment: AlignmentDirectional.center,
                     child: Icon(
-                      Icons.flutter_dash, // Example icon, replace with your actual logo/icon
-                      color: primaryText, // Using primaryText for icon color
+                      Icons.flutter_dash,
+                      color: primaryText,
                       size: 70.0,
                     ),
                   ),
                 ),
-                // Main content container (the white card)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
                     width: double.infinity,
                     constraints: const BoxConstraints(
-                      maxWidth: 400.0, // Keeping the same max width as register page for consistency
+                      maxWidth: 400.0,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white, // White background for the card
+                      color: Colors.white,
                       boxShadow: const [
                         BoxShadow(
                           blurRadius: 4.0,
-                          color: Color(0x33000000), // Shadow color
+                          color: Color(0x33000000),
                           offset: Offset(0.0, 2.0),
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: Align(
                       alignment: AlignmentDirectional.center,
                       child: Form(
                         key: _formKey,
-                        autovalidateMode: _autovalidateMode, // Controlled by state
+                        autovalidateMode: _autovalidateMode,
                         child: Padding(
-                          padding: const EdgeInsets.all(32.0), // Padding inside the card
+                          padding: const EdgeInsets.all(32.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.center, // Center contents of the card
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 'Welcome Back',
@@ -225,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: TextFormField(
                                     controller: emailAddressTextController,
                                     focusNode: emailAddressFocusNode,
-                                    autofocus: false, // Set to false to prevent immediate focus
+                                    autofocus: false,
                                     autofillHints: const [AutofillHints.email],
                                     textInputAction: TextInputAction.next,
                                     obscureText: false,
@@ -281,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                                     autofocus: false,
                                     autofillHints: const [AutofillHints.password],
                                     textInputAction: TextInputAction.done,
-                                    obscureText: !passwordVisibility, // Toggles visibility
+                                    obscureText: !passwordVisibility,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       labelStyle: GoogleFonts.inter(color: secondaryText),
@@ -320,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                                         onTap: () => setState(
                                               () => passwordVisibility = !passwordVisibility,
                                         ),
-                                        focusNode: FocusNode(skipTraversal: true), // Skip traversal for icon
+                                        focusNode: FocusNode(skipTraversal: true),
                                         child: Icon(
                                           passwordVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                           color: secondaryText,
@@ -333,65 +331,151 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               ),
+                              // User Type Selection
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedLoginType = UserType.patient;
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: _selectedLoginType == UserType.patient ? primaryGreen : lightBackground,
+                                          foregroundColor: _selectedLoginType == UserType.patient ? Colors.white : primaryText,
+                                          side: BorderSide(
+                                            color: _selectedLoginType == UserType.patient ? primaryGreen : secondaryText,
+                                            width: 1.0,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12.0),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                        ),
+                                        child: Text(
+                                          'Patient',
+                                          style: GoogleFonts.interTight(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16.0),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedLoginType = UserType.therapist;
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: _selectedLoginType == UserType.therapist ? primaryGreen : lightBackground,
+                                          foregroundColor: _selectedLoginType == UserType.therapist ? Colors.white : primaryText,
+                                          side: BorderSide(
+                                            color: _selectedLoginType == UserType.therapist ? primaryGreen : secondaryText,
+                                            width: 1.0,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12.0),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                        ),
+                                        child: Text(
+                                          'Therapist',
+                                          style: GoogleFonts.interTight(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               // Sign In Button
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    // Trigger validation for the entire form
                                     setState(() {
                                       _autovalidateMode = AutovalidateMode.always;
                                     });
 
-                                    // Check if the form is valid after triggering validation
                                     if (_formKey.currentState == null || !_formKey.currentState!.validate()) {
-                                      // If form is invalid, validation errors will now be visible.
                                       return;
                                     }
 
-                                    // If form is valid, proceed with Firebase authentication
                                     try {
-                                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                                         email: emailAddressTextController.text,
                                         password: passwordTextController.text,
                                       );
 
-                                      // Login successful, navigate to HomePage
-                                      if (mounted) { // Check if the widget is still in the widget tree
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const HomePage()),
+                                      String targetCollection = _selectedLoginType == UserType.patient ? 'users' : 'therapists';
+                                      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection(targetCollection).doc(userCredential.user!.uid).get();
+
+                                      if (userDoc.exists) {
+                                        if (mounted) {
+                                          if (_selectedLoginType == UserType.patient) {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => const HomePage()),
+                                            );
+                                          } else { // UserType.therapist
+                                            // Check if therapist setup is complete
+                                            bool isSetupComplete = userDoc['isSetupComplete'] as bool? ?? false;
+                                            if (isSetupComplete) {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const TherapistHomePage()), // Navigate to TherapistHomePage
+                                              );
+                                            } else {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const TherapistAccountSetupPage()), // Navigate to TherapistAccountSetupPage
+                                              );
+                                            }
+                                          }
+                                        }
+                                      } else {
+                                        await FirebaseAuth.instance.signOut();
+                                        _showAlertDialog(
+                                          'Login Failed',
+                                          'Account found, but not registered as a ${_selectedLoginType == UserType.patient ? 'Patient' : 'Therapist'}. Please try the other option or register.',
                                         );
                                       }
                                     } on FirebaseAuthException catch (e) {
-                                      // Handle specific Firebase authentication errors
                                       print('Firebase Auth Error: ${e.code} - ${e.message}');
                                       String errorMessage = 'An error occurred. Please try again.';
                                       if (e.code == 'user-not-found') {
-                                        errorMessage = 'No user found for that email.';
+                                        errorMessage = 'No user found for that email. Please check your email or register.';
                                       } else if (e.code == 'wrong-password') {
-                                        errorMessage = 'Wrong password provided for that user.';
+                                        errorMessage = 'Wrong password provided. Please try again.';
                                       } else if (e.code == 'invalid-email') {
                                         errorMessage = 'The email address is not valid.';
                                       } else if (e.code == 'user-disabled') {
-                                        errorMessage = 'This user account has been disabled.';
+                                        errorMessage = 'This account has been disabled.';
                                       }
                                       _showAlertDialog('Login Failed', errorMessage);
                                     } catch (e) {
-                                      // Handle other potential errors
                                       print('General Error: $e');
                                       _showAlertDialog('Error', 'Something went wrong. Please try again.');
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(double.infinity, 44.0), // Match height
-                                    backgroundColor: primaryGreen, // Button background color
-                                    foregroundColor: Colors.white, // Text color
+                                    minimumSize: const Size(double.infinity, 44.0),
+                                    backgroundColor: primaryGreen,
+                                    foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                                      borderRadius: BorderRadius.circular(12.0),
                                     ),
-                                    elevation: 3.0, // Match elevation
-                                    side: const BorderSide(color: Colors.transparent, width: 1.0), // Transparent border
+                                    elevation: 3.0,
+                                    side: const BorderSide(color: Colors.transparent, width: 1.0),
                                   ),
                                   child: Text(
                                     'Sign In',
@@ -405,31 +489,30 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               // "Don't have an account? Sign Up here" text
                               Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 40.0), // Added bottom padding
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 40.0),
                                 child: RichText(
                                   textScaler: MediaQuery.of(context).textScaler,
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
                                         text: 'Don\'t have an account?  ',
-                                        style: GoogleFonts.inter( // Font from your original code
-                                          color: primaryText, // Default text color
+                                        style: GoogleFonts.inter(
+                                          color: primaryText,
                                           letterSpacing: 0.0,
                                           fontSize: 14.0,
                                         ),
                                       ),
                                       TextSpan(
                                         text: 'Sign Up here',
-                                        style: GoogleFonts.inter( // Font from your original code
+                                        style: GoogleFonts.inter(
                                           fontWeight: FontWeight.w600,
-                                          color: primaryGreen, // Primary color for link
+                                          color: primaryGreen,
                                           letterSpacing: 0.0,
-                                          decoration: TextDecoration.underline, // Underlined link
+                                          decoration: TextDecoration.underline,
                                           fontSize: 14.0,
                                         ),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () async {
-                                            // Navigate to the RegisterPage
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(builder: (context) => const RegisterPage()),
@@ -437,7 +520,7 @@ class _LoginPageState extends State<LoginPage> {
                                           },
                                       )
                                     ],
-                                    style: GoogleFonts.inter(letterSpacing: 0.0), // Base style for RichText
+                                    style: GoogleFonts.inter(letterSpacing: 0.0),
                                   ),
                                 ),
                               ),
