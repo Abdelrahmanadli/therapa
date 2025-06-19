@@ -1,6 +1,6 @@
 {
-    "name": "therapa",
-    "short_name": "therapa",
+    "name": "monsy_weird_package",
+    "short_name": "monsy_weird_package",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

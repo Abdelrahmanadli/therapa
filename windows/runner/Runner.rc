@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "therapa" "\0"
+            VALUE "FileDescription", "monsy_weird_package" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "therapa" "\0"
+            VALUE "InternalName", "monsy_weird_package" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "therapa.exe" "\0"
-            VALUE "ProductName", "therapa" "\0"
+            VALUE "OriginalFilename", "monsy_weird_package.exe" "\0"
+            VALUE "ProductName", "monsy_weird_package" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

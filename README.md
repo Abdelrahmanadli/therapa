@@ -1,16 +1,11 @@
-# therapa
+this is a package of different code i use for testing and trying new things
+pages might nor be connected
+design is very minimal and focus is mainly on functionality
+everything is free for use
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+main features:
+firebase auth
+cloudStore data saving for accounts
+cloudStore data saving for messages 
+ai local api test
+ai local api chat
